@@ -1,0 +1,7 @@
+<header class="topbar">
+  <a class="brand" href="/">📚 Documentação Offline</a>
+  <form class="searchform" action="/buscar" method="get">
+    <input type="text" name="q" placeholder="Buscar na documentação..." value="<%= typeof query !== 'undefined' ? query : '' %>" autocomplete="off">
+    <button type="submit">Buscar</button>
+  </form>
+</header>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('partials/head') %>
+<body>
+  <%- include('partials/topbar') %>
+  <div class="layout">
+    <%- include('partials/sidebar') %>
+    <main class="content">
+      <div class="breadcrumb"><a href="/<%= tech.id %>"><%= tech.name %></a> / <%= page.category %></div>
+      <h1><%= page.title %></h1>
+      <article class="doc-body">
+        <%- page.html %>
+      </article>
+      <% if (page.source) { %>
+        <div class="source-box">
+          <strong>Fonte oficial consultada:</strong>
+          <%= page.sourceLabel || page.source %>
+          <br><code><%= page.source %></code>
+          <% if (page.officialTranslation) { %>
+            <div class="translated-note">Esta página reproduz a tradução oficial em português publicada pela própria documentação.</div>
+          <% } else { %>
+            <div class="translated-note">Conteúdo traduzido para português a partir da documentação oficial em inglês acima, mantendo fidelidade ao texto original.</div>
+          <% } %>
+        </div>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

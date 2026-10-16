@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('partials/head') %>
+<body>
+  <%- include('partials/topbar') %>
+  <div class="layout">
+    <%- include('partials/sidebar') %>
+    <main class="content">
+      <h1>Resultados da busca: "<%= query %>"</h1>
+      <% if (results.length === 0) { %>
+        <p class="note">Nenhum resultado encontrado.</p>
+      <% } else { %>
+        <ul class="search-results">
+          <% results.forEach(function(r) { %>
+            <li>
+              <a href="/<%= r.techId %>/<%= r.slug %>"><%= r.title %></a>
+              <span class="category-tag"><%= r.category %></span>
+              <p><%= r.snippet %></p>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "sistema-documentacao",
+  "version": "1.0.0",
+  "description": "Sistema offline de consulta a documentacao oficial (Node.js, Express, JavaScript, HTML, MySQL Workbench) para uso em prova sem internet.",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "gray-matter": "^4.0.3",
+    "marked": "^13.0.3"
+  }
+}

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('partials/head') %>
+<body>
+  <%- include('partials/topbar') %>
+  <div class="layout">
+    <%- include('partials/sidebar') %>
+    <main class="content">
+      <h1><%= tech.name %></h1>
+      <% if (tech.pages.length === 0) { %>
+        <p class="note">Nenhuma página cadastrada ainda para <%= tech.name %>.</p>
+      <% } else { %>
+        <ul class="page-list">
+          <% tech.pages.forEach(function(p) { %>
+            <li><a href="/<%= tech.id %>/<%= p.slug %>"><%= p.title %></a> <span class="category-tag"><%= p.category %></span></li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </main>
+  </div>
+</body>
+</html>

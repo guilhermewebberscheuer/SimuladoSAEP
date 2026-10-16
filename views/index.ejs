@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<%- include('partials/head') %>
+<body>
+  <%- include('partials/topbar') %>
+  <div class="layout">
+    <%- include('partials/sidebar') %>
+    <main class="content">
+      <h1>Documentação Offline da Prova</h1>
+      <p>Use o menu à esquerda ou a busca no topo para consultar a documentação oficial (traduzida para português) de:</p>
+      <div class="tech-grid">
+        <% techs.forEach(function(t) { %>
+          <a class="tech-card" href="/<%= t.id %>">
+            <strong><%= t.name %></strong>
+            <span><%= t.pages.length %> página(s)</span>
+          </a>
+        <% }) %>
+      </div>
+      <p class="note">Cada página indica a fonte oficial original consultada. Este sistema funciona totalmente sem internet.</p>
+    </main>
+  </div>
+</body>
+</html>

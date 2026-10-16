@@ -1,0 +1,25 @@
+<nav class="sidebar">
+  <% techs.forEach(function(t) { %>
+    <div class="sidebar-tech">
+      <a class="sidebar-tech-title <%= currentTechId === t.id ? 'active' : '' %>" href="/<%= t.id %>"><%= t.name %></a>
+      <% if (currentTechId === t.id) { %>
+        <%
+          var categories = [];
+          t.pages.forEach(function(p) {
+            if (categories.indexOf(p.category) === -1) categories.push(p.category);
+          });
+        %>
+        <% categories.forEach(function(cat) { %>
+          <div class="sidebar-category"><%= cat %></div>
+          <ul class="sidebar-pages">
+            <% t.pages.filter(function(p){ return p.category === cat; }).forEach(function(p) { %>
+              <li>
+                <a class="<%= currentSlug === p.slug ? 'active' : '' %>" href="/<%= t.id %>/<%= p.slug %>"><%= p.title %></a>
+              </li>
+            <% }) %>
+          </ul>
+        <% }) %>
+      <% } %>
+    </div>
+  <% }) %>
+</nav>
