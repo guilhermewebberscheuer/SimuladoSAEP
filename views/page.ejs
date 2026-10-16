@@ -1,28 +1,44 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="<%= content.kind === 'en' ? 'en' : 'pt-BR' %>">
 <%- include('partials/head') %>
 <body>
   <%- include('partials/topbar') %>
   <div class="layout">
     <%- include('partials/sidebar') %>
     <main class="content">
-      <div class="breadcrumb"><a href="/<%= tech.id %>"><%= tech.name %></a> / <%= page.category %></div>
-      <h1><%= page.title %></h1>
-      <article class="doc-body">
-        <%- page.html %>
-      </article>
-      <% if (page.source) { %>
-        <div class="source-box">
-          <strong>Fonte oficial consultada:</strong>
-          <%= page.sourceLabel || page.source %>
-          <br><code><%= page.source %></code>
-          <% if (page.officialTranslation) { %>
-            <div class="translated-note">Esta página reproduz a tradução oficial em português publicada pela própria documentação.</div>
-          <% } else { %>
-            <div class="translated-note">Conteúdo traduzido para português a partir da documentação oficial em inglês acima, mantendo fidelidade ao texto original.</div>
-          <% } %>
+      <div class="breadcrumb"><a href="/docs/<%= tech.id %>"><%= tech.name %></a> / <%= page.category %></div>
+      <% if (content.kind === 'oficial') { %>
+        <div class="aviso">
+          <strong>Versão oficial em português</strong>, publicada pela própria documentação.
+          Em caso de diferença, vale o original em inglês, que pode estar mais atualizado.
+          <a href="/idioma/en?volta=<%= encodeURIComponent(currentUrl) %>">Ver original em inglês</a>
         </div>
+      <% } else if (content.kind === 'automatica') { %>
+        <div class="aviso traducao">
+          <strong>Tradução automática — não é a documentação oficial.</strong>
+          O texto oficial é o original em inglês.
+          <a href="/idioma/en?volta=<%= encodeURIComponent(currentUrl) %>">Ver original</a>
+        </div>
+      <% } else if (lang === 'pt' && tech.ptCount > 0) { %>
+        <div class="aviso">Esta página ainda não tem versão oficial em português; exibindo o original em inglês.</div>
+      <% } else if (lang === 'pt') { %>
+        <div class="aviso">A documentação de <%= tech.name %> só existe oficialmente em inglês.</div>
       <% } %>
+      <h1><%= content.title %></h1>
+      <article class="doc-body">
+        <%- content.html %>
+      </article>
+      <div class="source-box">
+        <strong>Fonte oficial:</strong> <%= tech.sourceLabel %><br>
+        <code><%= content.kind === 'oficial' ? content.ptUrl : page.url %></code><br>
+        <% if (content.kind === 'oficial') { %>
+          Original em inglês: <code><%= page.url %></code><br>
+        <% } %>
+        Copiado em <%= new Date(tech.downloadedAt).toLocaleDateString('pt-BR') %><%= tech.version ? ' · versão ' + tech.version : '' %>
+        <% if (content.kind === 'automatica') { %>
+          <div class="translated-note">Tradução automática gerada por <%= content.translation.model %> em <%= new Date(content.translation.translatedAt).toLocaleDateString('pt-BR') %>.</div>
+        <% } %>
+      </div>
     </main>
   </div>
 </body>

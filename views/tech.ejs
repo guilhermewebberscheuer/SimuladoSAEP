@@ -7,15 +7,23 @@
     <%- include('partials/sidebar') %>
     <main class="content">
       <h1><%= tech.name %></h1>
-      <% if (tech.pages.length === 0) { %>
-        <p class="note">Nenhuma página cadastrada ainda para <%= tech.name %>.</p>
-      <% } else { %>
-        <ul class="page-list">
-          <% tech.pages.forEach(function(p) { %>
-            <li><a href="/<%= tech.id %>/<%= p.slug %>"><%= p.title %></a> <span class="category-tag"><%= p.category %></span></li>
-          <% }) %>
-        </ul>
-      <% } %>
+      <p><%= tech.description %></p>
+      <div class="source-box">
+        <strong>Fonte oficial:</strong> <%= tech.sourceLabel %><br>
+        <code><%= tech.homepage %></code><br>
+        <%= tech.pages.length %> páginas<%= tech.ptCount ? ' (' + tech.ptCount + ' com versão oficial em português)' : '' %><%= tech.version ? ' · versão ' + tech.version : '' %>
+        · baixado em <%= new Date(tech.downloadedAt).toLocaleDateString('pt-BR') %>
+      </div>
+      <% tech.categories.forEach(function(cat) { %>
+        <details class="category-block" <%= tech.categories.length <= 8 ? 'open' : '' %>>
+          <summary><%= cat.name %> <span class="count"><%= cat.pages.length %></span></summary>
+          <ul class="page-list">
+            <% cat.pages.forEach(function(p) { %>
+              <li><a href="<%= p.href %>"><%= lang === 'pt' && p.ptTitle ? p.ptTitle : p.title %></a></li>
+            <% }) %>
+          </ul>
+        </details>
+      <% }) %>
     </main>
   </div>
 </body>

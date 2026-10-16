@@ -1,92 +1,115 @@
-# Sistema de Documentação Offline
+# Sistema de Documentação Oficial Offline
 
-Site local (Node.js + Express) para consulta à documentação **oficial**, traduzida para português, durante provas sem acesso à internet. Cobre: **Node.js, Express, JavaScript, HTML, MySQL Workbench**, além das bibliotecas de apoio necessárias para um projeto de autenticação/CRUD completo (**mysql2, jsonwebtoken, bcrypt**).
+Site local (Node.js + Express) que **baixa a documentação oficial** de cada linguagem e biblioteca e a exibe **sem internet**, para provas em que só é permitido consultar a documentação oficial.
 
-Cada página do sistema exibe, ao final, a fonte oficial original consultada (URL), para que o conteúdo possa ser auditado e nunca se afaste da documentação real.
+O conteúdo é copiado dos sites dos próprios mantenedores, em dois idiomas:
 
-## Como rodar (modo normal, com internet disponível para instalar)
+- **EN (original):** o texto oficial em inglês, sempre disponível.
+- **PT (português):** a **versão oficial em português**, quando a própria documentação publica uma (MDN, parte do Express e do mysql2). Quando a página não tem versão em português, aparece o original em inglês com um aviso.
+
+Nada é reescrito: o sistema só remove menus, scripts e propagandas, e ajusta os links para apontarem para a cópia local. Cada página mostra o endereço oficial de onde foi copiada.
+
+Também existe uma **tradução automática opcional** para as páginas sem versão oficial em português (veja abaixo). Ela é sempre marcada como "não oficial" e fica escondida no modo prova.
+
+## O que é baixado
+
+| Tecnologia | Fonte oficial | Páginas (aprox.) | Com versão oficial em português |
+|---|---|---|---|
+| JavaScript | MDN Web Docs — developer.mozilla.org | 1.340 | 507 |
+| HTML | MDN Web Docs | 260 | 122 |
+| CSS | MDN Web Docs | 1.280 | 214 |
+| APIs Web (DOM, eventos, fetch, formulários, localStorage) | MDN Web Docs | 1.200 | 254 |
+| HTTP (status, métodos, CORS, cookies) | MDN Web Docs | 90 | 74 |
+| Node.js (API completa) | nodejs.org/dist/&lt;versão&gt;/docs/api | 64 | não existe |
+| Express 4.x | expressjs.com | 44 | 34 (guias; a referência da API é só em inglês) |
+| MySQL 8.0 Reference Manual (tutorial, tipos de dados, funções, comandos SQL, views/triggers/procedures) | dev.mysql.com/doc/refman | 480 | não existe |
+| MySQL Workbench Manual | dev.mysql.com/doc/workbench | 245 | não existe |
+| mysql2 | sidorares.github.io/node-mysql2 | 47 | 4 |
+| jsonwebtoken, bcrypt | README oficial publicado no npm | 1 cada | não existe |
+
+As versões em português do MDN são mantidas pela comunidade oficial e às vezes estão menos atualizadas que o original; por isso cada página em português tem um link para o original em inglês.
+
+Para ver a lista: `npm run baixar-docs -- --listar`. Para incluir outro pacote npm ou outra seção do MDN, edite [lib/sources/index.js](lib/sources/index.js).
+
+## Passo a passo para a prova
+
+### 1. Em um computador com internet (uma vez só)
 
 ```
 npm install
-npm start
+npm run baixar-docs
 ```
 
-Acesse http://localhost:3000 no navegador.
+O download leva cerca de 10 minutos e ocupa algumas centenas de MB na pasta `docs/`. Se cair a conexão, é só rodar o mesmo comando de novo: ele continua de onde parou.
 
-## Como preparar para o dia da prova (sem internet)
+Opções úteis:
 
-O `npm install` baixa os pacotes da internet. Isso só precisa ser feito **uma vez**, antes da prova. Depois disso, a pasta inteira do projeto (incluindo `node_modules`) pode ser copiada via pendrive/rede para os computadores da prova e funciona 100% offline, sem precisar repetir o `npm install`.
-
-Passos recomendados:
-
-1. Em um computador com internet, rode `npm install` dentro da pasta do projeto.
-2. Copie a pasta completa (`sistema_documentacao`, incluindo `node_modules`) para cada computador da prova (ou para um só, se os alunos vão acessar por rede local).
-3. Em cada computador, rode `npm start` (ou `node server.js`).
-4. Os alunos acessam `http://localhost:3000` no navegador da própria máquina — ou, se for um único computador servindo a sala, `http://IP_DO_COMPUTADOR:3000` pela rede local (sem internet).
-
-Nenhum CSS, script ou imagem é carregado de CDN externo — tudo é servido localmente pela pasta `public/`.
-
-## Como adicionar/editar conteúdo
-
-Cada página é um arquivo Markdown dentro de `content/<tecnologia>/`, uma das pastas:
-
-- `content/nodejs/`
-- `content/express/`
-- `content/javascript/`
-- `content/html/`
-- `content/mysql-workbench/`
-- `content/mysql2/` (driver de conexão Node.js ↔ MySQL)
-- `content/jsonwebtoken/` (autenticação com token/expiração)
-- `content/bcrypt/` (hash de senha)
-
-Formato de cada arquivo (exemplo):
-
-```markdown
----
-title: "Título da página"
-category: "Nome da categoria no menu"
-order: 1
-source: "https://url-da-documentacao-oficial"
-sourceLabel: "Nome oficial da fonte"
-officialTranslation: true
----
-
-Conteúdo em Markdown aqui, em português.
+```
+npm run baixar-docs -- javascript nodejs   # só algumas tecnologias
+npm run baixar-docs -- --forcar            # baixa tudo de novo (atualiza)
+npm run baixar-docs -- --sem-imagens       # não baixa imagens
 ```
 
-- `officialTranslation: true` → use quando a fonte oficial **já tem** tradução em português publicada oficialmente (ex.: MDN pt-BR, Express.js pt-br). Nesse caso, o texto deve ser copiado/adaptado da própria página oficial em português.
-- `officialTranslation: false` (ou omitir) → use quando a fonte oficial só existe em inglês (ex.: Node.js API docs, MySQL Reference Manual / Workbench Manual). Nesse caso, o texto é uma tradução fiel feita para este sistema, e a página exibe um aviso disso.
+Versões (variáveis de ambiente, antes de rodar o download):
 
-Depois de adicionar/editar arquivos `.md`, basta reiniciar o servidor (`Ctrl+C` e `npm start` novamente) para que o conteúdo e o índice de busca sejam atualizados. (Existe também a rota `/recarregar` para recarregar sem reiniciar o processo.)
+- `NODE_DOCS_VERSION=v22.11.0`: versão da documentação do Node.js. O padrão é a versão do Node instalada no computador que faz o download. **Use a mesma versão das máquinas da prova.**
+- `EXPRESS_DOCS_VERSION=5x`: documentação do Express 5. O padrão é `4x`.
+- `MYSQL_DOCS_VERSION=8.4`: versão do manual do MySQL. O padrão é `8.0`.
 
-## Fontes oficiais usadas como base
+### 2. Copiar para os computadores da prova
 
-| Tecnologia | Fonte oficial | Tem pt-BR oficial? |
-|---|---|---|
-| JavaScript | developer.mozilla.org (MDN) | Sim |
-| HTML | developer.mozilla.org (MDN) | Sim |
-| Express | expressjs.com/pt-br | Sim |
-| Node.js | nodejs.org/docs/latest/api | Não — tradução própria, fiel ao original |
-| MySQL Workbench | dev.mysql.com/doc/workbench | Não — tradução própria, fiel ao original |
-| mysql2 | sidorares.github.io/node-mysql2 | Não — tradução própria, fiel ao original |
-| jsonwebtoken | github.com/auth0/node-jsonwebtoken | Não — tradução própria, fiel ao original |
-| bcrypt | npmjs.com/package/bcrypt | Não — tradução própria, fiel ao original |
+Copie a pasta inteira do projeto, **incluindo `node_modules` e `docs`**, via pendrive ou rede. Não é preciso rodar `npm install` de novo.
 
-## Por que mysql2, jsonwebtoken e bcrypt estão incluídos
+### 3. No dia da prova (sem internet)
 
-A documentação oficial do Node.js **não** ensina a conectar com o MySQL, gerar tokens com expiração ou fazer hash de senha — isso depende de pacotes de terceiros. Como a prova (modelo SENAI/SAEP) exige login com expiração e dados sensíveis (senha, CPF) protegidos, incluí a documentação oficial desses três pacotes específicos, usados no curso: `mysql2` (conexão com o banco), `jsonwebtoken` (token de login com expiração) e `bcrypt` (hash de senha). Se o curso usar outro pacote para algum desses pontos (ex.: `mysql` em vez de `mysql2`, ou sessão em vez de JWT), avise para eu ajustar o conteúdo.
+```
+npm run start:prova
+```
 
-## Status atual do conteúdo
+Acesse **http://localhost:3322** no navegador. Se um único computador servir a sala, os alunos acessam `http://IP_DO_COMPUTADOR:3322` pela rede local.
 
-23 páginas já traduzidas e revisadas, cobrindo o necessário para o tipo de prova prática apresentada (sistema de cadastro/agendamento com login, CRUD, criptografia e relacionamento entre tabelas):
+`npm run start:prova` liga o **modo prova**: só aparece conteúdo oficial (o original em inglês e as versões oficiais em português). As traduções automáticas ficam escondidas. Para usar também a tradução automática, rode `npm start`.
 
-- **JavaScript**: variáveis, funções, arrays/objetos, async/await, manipulação do DOM
-- **HTML**: estrutura básica, formulários, tabelas
-- **Node.js**: módulo `fs`, módulo `crypto` (hash e criptografia reversível para CPF)
-- **Express**: roteamento, middleware, req/res, Router, tratamento de erros
-- **MySQL Workbench**: visão geral da ferramenta, modelagem ER/Forward Engineering, tipos de dados, DDL (CREATE/ALTER TABLE, chaves), DML (INSERT/SELECT/UPDATE/DELETE/JOIN)
-- **mysql2**: conexão/pool, consultas parametrizadas (incluindo busca e JOIN)
-- **jsonwebtoken**: geração/verificação de token com expiração, middleware de autenticação
-- **bcrypt**: hash e verificação de senha
+Nenhum CSS, script ou imagem é carregado da internet. Tudo vem das pastas `public/` e `docs/`. Links para páginas que não foram baixadas aparecem com ↗ e só funcionam com internet.
 
-Pode ser expandido a qualquer momento — basta adicionar novos arquivos `.md` seguindo o formato acima.
+## Busca
+
+A busca no topo procura em todas as documentações ao mesmo tempo, ou só na tecnologia atual. Ela leva direto à seção da página (por exemplo, `res.json` abre a seção `res.json()` da página Response do Express). Como o conteúdo é em inglês, busque com termos em inglês: `array map`, `foreign key`, `inner join`, `addEventListener`.
+
+## Tradução automática para português (opcional, paga)
+
+Para as páginas **sem** versão oficial em português (Node.js, MySQL, referência da API do Express etc.), é possível gerar uma tradução automática. Ela aparece no modo PT, fora do modo prova. A tradução:
+
+- é gerada **antes**, com internet, e fica salva em `docs/<tecnologia>/pt/`, então depois também funciona offline;
+- usa a API do Claude (Anthropic). É preciso uma chave em `ANTHROPIC_API_KEY`;
+- traduz só o texto. Blocos de código, nomes de funções, comandos e URLs ficam como no original;
+- aparece sempre com o aviso **"Tradução automática — não é a documentação oficial"** e um link para o original.
+
+```
+npm run traduzir -- --estimar                         # só mostra o custo estimado
+npm run traduzir -- express nodejs                    # traduz algumas tecnologias
+npm run traduzir -- --limite=20                       # traduz no máximo 20 páginas
+npm run traduzir -- --modelo=claude-haiku-5-5         # modelo mais barato
+npm run traduzir                                      # traduz tudo o que falta
+```
+
+Páginas que já têm versão oficial em português são puladas. Use `--estimar` para ver o custo antes; com `claude-haiku-5-5` a documentação inteira custa poucos dólares. O comando `--estimar` mostra o valor exato para o que você escolher. Páginas já traduzidas são puladas, então dá para traduzir aos poucos. Depois de traduzir, reinicie o servidor ou acesse `/recarregar`.
+
+> Atenção: a regra da prova fala em documentação **oficial**. A tradução automática não é oficial; por isso o modo prova a esconde. As versões oficiais em português continuam visíveis.
+
+## Estrutura
+
+```
+server.js                 servidor web (porta 3322)
+scripts/baixar-docs.js    download da documentação oficial
+scripts/traduzir.js       tradução automática opcional
+lib/sources/              uma fonte por site oficial (MDN, Node, Express, MySQL, npm)
+lib/html.js               limpeza do HTML baixado (sem alterar o texto)
+lib/library.js            leitura das páginas e reescrita de links para a cópia local
+lib/search.js             índice de busca
+lib/translate.js          chamada à API do Claude para tradução
+docs/                     documentação baixada (gerada; fora do git)
+views/, public/           interface
+```
+
+A pasta `content/` guarda as 23 páginas resumidas e traduzidas à mão da versão anterior do sistema. Ela **não é mais exibida**, porque esse material não é documentação oficial.

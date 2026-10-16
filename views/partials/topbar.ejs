@@ -1,7 +1,19 @@
 <header class="topbar">
-  <a class="brand" href="/">📚 Documentação Offline</a>
+  <a class="brand" href="/">Documentação Offline</a>
   <form class="searchform" action="/buscar" method="get">
-    <input type="text" name="q" placeholder="Buscar na documentação..." value="<%= typeof query !== 'undefined' ? query : '' %>" autocomplete="off">
+    <input type="text" name="q" placeholder="Buscar na documentação..." value="<%= query %>" autocomplete="off">
+    <% if (currentTechId) { %>
+      <select name="tech" aria-label="Onde buscar">
+        <option value="">Todas</option>
+        <% techs.forEach(function(t) { %>
+          <option value="<%= t.id %>" <%= t.id === currentTechId ? 'selected' : '' %>><%= t.name %></option>
+        <% }) %>
+      </select>
+    <% } %>
     <button type="submit">Buscar</button>
   </form>
+  <div class="lang-switch" title="PT mostra a versão oficial em português quando ela existe; senão, o original em inglês.">
+    <a class="<%= lang === 'en' ? 'active' : '' %>" href="/idioma/en?volta=<%= encodeURIComponent(currentUrl) %>">EN (original)</a>
+    <a class="<%= lang === 'pt' ? 'active' : '' %>" href="/idioma/pt?volta=<%= encodeURIComponent(currentUrl) %>">PT (português)</a>
+  </div>
 </header>

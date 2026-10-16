@@ -143,3 +143,102 @@ a:hover { text-decoration: underline; }
 .search-results { list-style: none; padding: 0; }
 .search-results li { padding: 10px 0; border-bottom: 1px solid #eee; }
 .search-results p { color: #555; margin: 4px 0 0; font-size: 0.9rem; }
+
+/* --- Documentação oficial baixada --- */
+.searchform select { padding: 6px; border-radius: 4px; border: 1px solid #444; }
+.lang-switch { display: flex; gap: 4px; font-size: 0.85rem; }
+.lang-switch a { color: #ccc; padding: 4px 8px; border-radius: 4px; border: 1px solid #444; }
+.lang-switch a.active { color: #fff; background: #3a6df0; border-color: #3a6df0; }
+
+.sidebar { position: sticky; top: 53px; height: calc(100vh - 53px); flex-shrink: 0; }
+.sidebar details.sidebar-category > summary {
+  cursor: pointer;
+  padding: 5px 16px;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: #666;
+}
+.count { color: #aaa; font-size: 0.75rem; font-weight: normal; }
+.sidebar-pages li a { padding: 3px 24px; font-size: 0.88rem; overflow-wrap: anywhere; }
+
+.content { max-width: 980px; min-width: 0; }
+.category-block { margin: 6px 0; }
+.category-block > summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+
+.aviso {
+  padding: 10px 14px;
+  margin-bottom: 14px;
+  background: #eef3fc;
+  border: 1px solid #c8d8f5;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+.aviso.traducao { background: #fff1e6; border-color: #f3c9a5; }
+
+.doc-body img { max-width: 100%; height: auto; }
+.doc-body a.link-externo::after { content: " ↗"; font-size: 0.8em; color: #999; }
+.doc-body .aviso-offline, .doc-body .img-indisponivel { color: #888; font-style: italic; font-size: 0.85rem; }
+.doc-body .tab-label { margin: 10px 0 2px; font-size: 0.8rem; font-weight: 600; color: #666; }
+.doc-body figure { margin: 0; }
+.doc-body figcaption:empty { display: none; }
+.doc-body blockquote, .doc-body .notecard, .doc-body .note, .doc-body .warning, .doc-body .important {
+  margin: 12px 0;
+  padding: 8px 14px;
+  border-left: 4px solid #3a6df0;
+  background: #f3f6fd;
+}
+.doc-body .notecard.warning, .doc-body .warning { border-color: #e0a100; background: #fff8e1; }
+.doc-body dt { font-weight: 600; margin-top: 8px; }
+.doc-body h2, .doc-body h3, .doc-body h4 { scroll-margin-top: 64px; }
+
+/* Node.js */
+.doc-body .page-toc { margin-bottom: 18px; padding: 8px 14px; background: #fff; border: 1px solid #e0e0e0; border-radius: 6px; }
+.doc-body .page-toc summary { cursor: pointer; font-weight: 600; }
+.doc-body .api_stability { padding: 6px 10px; border-radius: 4px; color: #fff; background: #5a8e3a; }
+.doc-body .api_stability_0 { background: #d60027; }
+.doc-body .api_stability_1 { background: #e0a100; }
+.doc-body .api_metadata { font-size: 0.85rem; color: #666; }
+.doc-body a.mark { color: #bbb; margin-left: 6px; }
+
+.search-results .result-title { font-weight: 600; }
+.result-section { margin: 6px 0 0 14px; }
+.result-section a { font-size: 0.92rem; }
+
+/* --- Menu recolhível: seta à esquerda de cada título --- */
+.sidebar-tech > summary,
+.sidebar-category > summary,
+.category-block > summary {
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-tech > summary::-webkit-details-marker,
+.sidebar-category > summary::-webkit-details-marker,
+.category-block > summary::-webkit-details-marker { display: none; }
+.sidebar-tech > summary::before,
+.sidebar-category > summary::before,
+.category-block > summary::before {
+  content: "";
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-45deg);
+  transition: transform 0.15s;
+  opacity: 0.6;
+}
+.sidebar-tech[open] > summary::before,
+.sidebar-category[open] > summary::before,
+.category-block[open] > summary::before { transform: rotate(45deg); }
+.sidebar-tech > summary:hover { background: #f3f5f9; }
+.sidebar-tech-body { padding-bottom: 6px; }
+.sidebar-overview { display: block; padding: 4px 16px 4px 30px; font-size: 0.88rem; color: #333; }
+.sidebar-overview.active { color: #1a5fb4; font-weight: 600; background: #eef3fc; }
+.sidebar details.sidebar-category > summary { padding-left: 30px; }
+.sidebar-pages li a { padding-left: 44px; }
+/* A regra antiga de .sidebar-category (maiúsculas) vale só para o título da categoria. */
+.sidebar .sidebar-category { padding: 0; font-size: inherit; text-transform: none; color: inherit; }

@@ -6,16 +6,27 @@
   <div class="layout">
     <%- include('partials/sidebar') %>
     <main class="content">
-      <h1>Resultados da busca: "<%= query %>"</h1>
+      <h1>Busca: "<%= query %>"</h1>
+      <% if (tech) { %>
+        <p class="note">Somente em <strong><%= techs.find(function(t){ return t.id === tech; }).name %></strong> ·
+          <a href="/buscar?q=<%= encodeURIComponent(query) %>">buscar em todas</a></p>
+      <% } %>
       <% if (results.length === 0) { %>
-        <p class="note">Nenhum resultado encontrado.</p>
+        <p class="note">Nenhum resultado encontrado. Tente também termos em inglês (ex.: "array map", "foreign key", "res.json"): boa parte da documentação só existe em inglês.</p>
       <% } else { %>
         <ul class="search-results">
           <% results.forEach(function(r) { %>
+            <% var t = techs.find(function(x){ return x.id === r.tech; }); %>
             <li>
-              <a href="/<%= r.techId %>/<%= r.slug %>"><%= r.title %></a>
-              <span class="category-tag"><%= r.category %></span>
-              <p><%= r.snippet %></p>
+              <a class="result-title" href="<%= r.href %>"><%= r.title %></a>
+              <span class="category-tag"><%= t ? t.name : r.tech %></span>
+              <% r.sections.forEach(function(s) { %>
+                <div class="result-section">
+                  <% if (s.heading) { %><a href="<%= r.href %><%= s.anchor ? '#' + encodeURIComponent(s.anchor) : '' %>"><%= s.heading %></a><% } %>
+                  <% if (s.lang === 'pt-auto') { %><span class="category-tag">tradução automática</span><% } %>
+                  <p><%= s.snippet %>…</p>
+                </div>
+              <% }) %>
             </li>
           <% }) %>
         </ul>

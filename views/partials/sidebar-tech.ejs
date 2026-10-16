@@ -1,0 +1,12 @@
+<a class="sidebar-overview <%= currentTechId === tech.id && !currentSlug ? 'active' : '' %>" href="/docs/<%= tech.id %>">Visão geral</a>
+<% tech.categories.forEach(function(cat) { %>
+  <% var open = cat.pages.some(function(p) { return p.slug === currentSlug; }); %>
+  <details class="sidebar-category" <%= open || tech.categories.length === 1 ? 'open' : '' %>>
+    <summary><%= cat.name %> <span class="count"><%= cat.pages.length %></span></summary>
+    <ul class="sidebar-pages">
+      <% cat.pages.forEach(function(p) { %>
+        <li><a class="<%= currentSlug === p.slug ? 'active' : '' %>" href="<%= p.href %>"><%= lang === 'pt' && p.ptTitle ? p.ptTitle : p.title %></a></li>
+      <% }) %>
+    </ul>
+  </details>
+<% }) %>

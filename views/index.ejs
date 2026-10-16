@@ -6,17 +6,25 @@
   <div class="layout">
     <%- include('partials/sidebar') %>
     <main class="content">
-      <h1>Documentação Offline da Prova</h1>
-      <p>Use o menu à esquerda ou a busca no topo para consultar a documentação oficial (traduzida para português) de:</p>
-      <div class="tech-grid">
-        <% techs.forEach(function(t) { %>
-          <a class="tech-card" href="/<%= t.id %>">
-            <strong><%= t.name %></strong>
-            <span><%= t.pages.length %> página(s)</span>
-          </a>
-        <% }) %>
-      </div>
-      <p class="note">Cada página indica a fonte oficial original consultada. Este sistema funciona totalmente sem internet.</p>
+      <h1>Documentação Oficial Offline</h1>
+      <% if (techs.length === 0) { %>
+        <div class="aviso">
+          <strong>Nenhuma documentação baixada ainda.</strong>
+          <p>Em um computador com internet, rode <code>npm run baixar-docs</code> na pasta do projeto e depois reinicie o servidor.</p>
+        </div>
+      <% } else { %>
+        <p>Cópia local da documentação oficial. O botão <strong>EN / PT</strong> no topo alterna entre o original em inglês e a versão oficial em português, quando a própria documentação publica uma.</p>
+        <div class="tech-grid">
+          <% techs.forEach(function(t) { %>
+            <a class="tech-card" href="/docs/<%= t.id %>">
+              <strong><%= t.name %></strong>
+              <span><%= t.description %></span>
+              <span><%= t.pages.length %> página(s)<%= t.ptCount ? ' · ' + t.ptCount + ' em português' : '' %><%= t.version ? ' · ' + t.version : '' %></span>
+            </a>
+          <% }) %>
+        </div>
+        <p class="note">Cada página mostra o endereço da fonte oficial de onde foi copiada. Este sistema funciona totalmente sem internet.</p>
+      <% } %>
     </main>
   </div>
 </body>

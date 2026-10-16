@@ -1,25 +1,16 @@
 <nav class="sidebar">
   <% techs.forEach(function(t) { %>
-    <div class="sidebar-tech">
-      <a class="sidebar-tech-title <%= currentTechId === t.id ? 'active' : '' %>" href="/<%= t.id %>"><%= t.name %></a>
-      <% if (currentTechId === t.id) { %>
-        <%
-          var categories = [];
-          t.pages.forEach(function(p) {
-            if (categories.indexOf(p.category) === -1) categories.push(p.category);
-          });
-        %>
-        <% categories.forEach(function(cat) { %>
-          <div class="sidebar-category"><%= cat %></div>
-          <ul class="sidebar-pages">
-            <% t.pages.filter(function(p){ return p.category === cat; }).forEach(function(p) { %>
-              <li>
-                <a class="<%= currentSlug === p.slug ? 'active' : '' %>" href="/<%= t.id %>/<%= p.slug %>"><%= p.title %></a>
-              </li>
-            <% }) %>
-          </ul>
-        <% }) %>
-      <% } %>
-    </div>
+    <% var current = currentTechId === t.id; %>
+    <details class="sidebar-tech" data-tech="<%= t.id %>" <%= current ? 'open' : '' %>>
+      <summary class="sidebar-tech-title <%= current ? 'active' : '' %>"><%= t.name %></summary>
+      <div class="sidebar-tech-body" <%= current ? 'data-loaded' : '' %>>
+        <% if (current) { %>
+          <%- include('sidebar-tech', { tech: t }) %>
+        <% } else { %>
+          <a class="sidebar-overview" href="/docs/<%= t.id %>">Visão geral</a>
+        <% } %>
+      </div>
+    </details>
   <% }) %>
 </nav>
+<script src="/static/js/sidebar.js"></script>
