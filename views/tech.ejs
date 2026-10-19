@@ -19,7 +19,7 @@
           <summary><%= cat.name %> <span class="count"><%= cat.pages.length %></span></summary>
           <ul class="page-list">
             <% cat.pages.forEach(function(p) { %>
-              <li><a href="<%= p.href %>"><%= lang === 'pt' && p.ptTitle ? p.ptTitle : p.title %></a></li>
+              <li><a href="<%= p.href %>"><%= lang === 'pt' ? (p.ptTitle || (allowAuto && p.autoTitle) || p.title) : p.title %></a></li>
             <% }) %>
           </ul>
         </details>
