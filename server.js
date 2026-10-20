@@ -3,6 +3,7 @@ const express = require('express');
 const library = require('./lib/library');
 const search = require('./lib/search');
 const store = require('./lib/store');
+const escopo = require('./lib/escopo');
 
 const app = express();
 const PORT = process.env.PORT || 3322;
@@ -31,6 +32,7 @@ app.use((req, res, next) => {
   res.locals.lang = langFrom(req);
   res.locals.examMode = EXAM_MODE;
   res.locals.allowAuto = !EXAM_MODE;
+  res.locals.escopoProva = escopo.ATIVO;
   res.locals.currentUrl = req.originalUrl;
   res.locals.query = '';
   next();
@@ -56,7 +58,7 @@ app.get('/recarregar', (req, res) => {
 app.get('/buscar', (req, res) => {
   const q = String(req.query.q || '').trim();
   const tech = lib.techs.some((t) => t.id === req.query.tech) ? req.query.tech : null;
-  const results = q ? search.query(index, q, { lang: res.locals.lang, tech, allowAuto: !EXAM_MODE }) : [];
+  const results = q ? search.query(index, q, { lang: res.locals.lang, tech, allowAuto: !EXAM_MODE, allowed: lib.pages }) : [];
   for (const r of results) r.href = library.localPath(r.tech, r.slug);
   res.render('search', { title: `Busca: ${q}`, query: q, tech, results });
 });
@@ -94,6 +96,7 @@ app.listen(PORT, () => {
   const total = lib.techs.reduce((n, t) => n + t.pages.length, 0);
   console.log(`Sistema de documentação offline rodando em http://localhost:${PORT}`);
   console.log(`${lib.techs.length} tecnologia(s), ${total} páginas. Nenhuma conexão com a internet é necessária.`);
+  if (escopo.ATIVO) console.log(`Escopo da prova: nível "${escopo.NIVEL}" (ESCOPO=essencial | amplo | completo).`);
   if (EXAM_MODE) console.log('MODO_PROVA ativo: só conteúdo oficial (traduções automáticas ocultas).');
   if (total === 0) console.log('Nenhuma documentação baixada ainda. Rode: npm run baixar-docs');
 });

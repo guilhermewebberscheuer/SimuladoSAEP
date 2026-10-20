@@ -14,6 +14,10 @@
         </div>
       <% } else { %>
         <p>Cópia local da documentação oficial. O botão <strong>EN / PT</strong> no topo alterna entre o original em inglês e a versão oficial em português, quando a própria documentação publica uma.</p>
+        <% if (escopoProva) { %>
+          <% var vis = techs.reduce(function(n, t){ return n + t.pages.length; }, 0); %>
+          <div class="aviso"><strong>Escopo da prova:</strong> exibindo só as páginas da documentação oficial relacionadas ao conteúdo da prova (<%= vis %> páginas). As páginas exibidas não foram alteradas.</div>
+        <% } %>
         <div class="tech-grid">
           <% techs.forEach(function(t) { %>
             <a class="tech-card" href="/docs/<%= t.id %>">

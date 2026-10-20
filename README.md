@@ -72,6 +72,37 @@ Acesse **http://localhost:3322** no navegador. Se um único computador servir a 
 
 Nenhum CSS, script ou imagem é carregado da internet. Tudo vem das pastas `public/` e `docs/`. Links para páginas que não foram baixadas aparecem com ↗ e só funcionam com internet.
 
+## Escopo da prova
+
+Por padrão o sistema **mostra só as páginas que o aluno precisa para a prova**, com base no simulado SENAI "Academia de Ginástica": login com JWT e expiração, senha com bcrypt, CPF criptografado (Node `crypto`), CRUD com busca e edição, listagem com JOIN ordenada por data, script SQL com chaves estrangeiras e DER no MySQL Workbench.
+
+- As páginas exibidas **não são alteradas**: o escopo só esconde páginas inteiras. Menu, busca e acesso direto por endereço respeitam o escopo; links para páginas fora dele aparecem como externos (↗).
+Há três níveis, escolhidos pela variável `ESCOPO`:
+
+| Nível | Páginas | O que é |
+|---|---|---|
+| `essencial` (padrão) | ~280 | o mínimo para resolver a prova — lista em [lib/escopo-essencial.js](lib/escopo-essencial.js) |
+| `amplo` | ~1.100 | o essencial mais assuntos relacionados — lista em [lib/escopo-prova.js](lib/escopo-prova.js) |
+| `completo` | ~5.000 | toda a documentação baixada |
+
+No PowerShell: `$env:ESCOPO="amplo"; npm run start:prova`. Para incluir ou tirar uma página, edite a lista do nível e reinicie o servidor.
+
+O que fica visível no nível **essencial**, por tecnologia:
+
+| Tecnologia | O que entra |
+|---|---|
+| JavaScript (83) | guias básicos (tipos, condições, laços, funções, objetos, arrays, datas, promises, módulos); if, for, try...catch, async/await, let/const; operadores mais usados; Array (map, filter, find, sort...), String (trim, split, includes...), Date, JSON, Promise, Object |
+| HTML (47) | estrutura da página, tabelas, formulários, tipos de `input` usados num cadastro e atributos de validação |
+| CSS (17) | seletores de tipo/classe/id, flexbox e propriedades básicas de espaçamento, cor e texto |
+| APIs Web (34) | buscar elementos, alterar conteúdo, eventos e submit de formulário, fetch e resposta JSON, FormData, localStorage, redirecionamento |
+| HTTP (10) | métodos GET/POST/PUT/DELETE e status 200, 201, 400, 401, 404, 500 |
+| Node.js (6) | crypto, Buffer, process, variáveis de ambiente, módulos, path |
+| Express (16) | instalação, rotas, middlewares, erros, arquivos estáticos, template engines, banco de dados, API (express, app, req, res, router), cors |
+| MySQL (29) | CREATE DATABASE/TABLE, FOREIGN KEY, ALTER/DROP TABLE, INSERT, SELECT, JOIN, UPDATE, DELETE, USE; tipos INT, DECIMAL, VARCHAR, TEXT, ENUM, DATE/DATETIME/TIME; funções de data, LIKE, criptografia e COUNT |
+| MySQL Workbench (21) | conexão, editor SQL, editor de tabelas e chaves estrangeiras, diagrama EER, exportar/imprimir o diagrama, engenharia direta e reversa, exportar o script SQL |
+| mysql2 (15) | conexão, pool, consultas simples e prepared statements (CRUD), promises, tratamento de erros |
+| jsonwebtoken, bcrypt (2) | README completo |
+
 ## Busca
 
 A busca no topo procura em todas as documentações ao mesmo tempo, ou só na tecnologia atual. Ela leva direto à seção da página (por exemplo, `res.json` abre a seção `res.json()` da página Response do Express). Como o conteúdo é em inglês, busque com termos em inglês: `array map`, `foreign key`, `inner join`, `addEventListener`.

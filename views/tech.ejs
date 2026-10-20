@@ -11,7 +11,7 @@
       <div class="source-box">
         <strong>Fonte oficial:</strong> <%= tech.sourceLabel %><br>
         <code><%= tech.homepage %></code><br>
-        <%= tech.pages.length %> páginas<%= tech.ptCount ? ' (' + tech.ptCount + ' com versão oficial em português)' : '' %><%= tech.version ? ' · versão ' + tech.version : '' %>
+        <%= tech.pages.length %> páginas<%= escopoProva && tech.totalPages > tech.pages.length ? ' (escopo da prova; ' + tech.totalPages + ' na documentação completa)' : '' %><%= tech.ptCount ? ' (' + tech.ptCount + ' com versão oficial em português)' : '' %><%= tech.version ? ' · versão ' + tech.version : '' %>
         · baixado em <%= new Date(tech.downloadedAt).toLocaleDateString('pt-BR') %>
       </div>
       <% tech.categories.forEach(function(cat) { %>
