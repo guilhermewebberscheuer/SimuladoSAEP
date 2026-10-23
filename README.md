@@ -144,3 +144,4 @@ views/, public/           interface
 ```
 
 A pasta `content/` guarda as 23 páginas resumidas e traduzidas à mão da versão anterior do sistema. Ela **não é mais exibida**, porque esse material não é documentação oficial.
+# SimuladoSAEP
