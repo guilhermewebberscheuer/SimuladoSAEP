@@ -1,0 +1,172 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Gerenciamento de alunos</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; background: #f4f4f4; }
+        main { max-width: 900px; margin: auto; }
+        form, .busca, .lista { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; }
+        input { display: block; width: 100%; box-sizing: border-box; padding: 10px; margin: 8px 0 15px; }
+        button { padding: 9px 14px; cursor: pointer; margin: 3px; }
+        .aluno { border-top: 1px solid #ddd; padding: 12px 0; }
+        #mensagem { margin: 12px 0; }
+    </style>
+</head>
+<body>
+<main>
+    <h1>Gerenciamento de alunos</h1>
+
+    <section class="busca">
+        <h2>Buscar alunos</h2>
+        <input id="busca" placeholder="Digite o nome ou e-mail">
+        <button id="btnBuscar">Buscar</button>
+        <button id="btnTodos">Mostrar todos</button>
+    </section>
+
+    <form id="formAluno">
+        <h2 id="tituloForm">Cadastrar aluno</h2>
+
+        <input type="hidden" id="id">
+        <label>Nome</label>
+        <input id="nome" required maxlength="100">
+
+        <label>CPF (11 números)</label>
+        <input id="cpf" required inputmode="numeric" maxlength="14">
+
+        <label>E-mail</label>
+        <input id="email" type="email" maxlength="150">
+
+        <label>Telefone</label>
+        <input id="telefone" maxlength="20">
+
+        <button type="submit">Salvar aluno</button>
+        <button type="button" id="btnCancelar">Cancelar edição</button>
+    </form>
+
+    <p id="mensagem" role="status"></p>
+
+    <section class="lista">
+        <h2>Alunos cadastrados</h2>
+        <div id="listaAlunos"></div>
+    </section>
+</main>
+
+<script>
+    const form = document.getElementById('formAluno');
+    const mensagem = document.getElementById('mensagem');
+    const lista = document.getElementById('listaAlunos');
+
+    async function requisicao(url, opcoes = {}) {
+        const resposta = await fetch(url, {
+            ...opcoes,
+            headers: {
+                'Content-Type': 'application/json',
+                ...(opcoes.headers || {})
+            }
+        });
+
+        const dados = await resposta.json();
+
+        if (!resposta.ok) {
+            throw new Error(dados.erro || 'Ocorreu um erro.');
+        }
+
+        return dados;
+    }
+
+    async function carregarAlunos(termo = '') {
+        try {
+            const url = '/api/alunos?q=' + encodeURIComponent(termo);
+            const alunos = await requisicao(url);
+
+            lista.replaceChildren();
+
+            if (alunos.length === 0) {
+                lista.textContent = 'Nenhum aluno encontrado.';
+                return;
+            }
+
+            alunos.forEach(aluno => {
+                const item = document.createElement('div');
+                item.className = 'aluno';
+
+                const texto = document.createElement('p');
+                texto.textContent =
+                    `${aluno.nome} | CPF: ${aluno.cpf} | E-mail: ${aluno.email || '-'} | Telefone: ${aluno.telefone || '-'}`;
+
+                const botao = document.createElement('button');
+                botao.textContent = 'Editar';
+
+                botao.addEventListener('click', () => {
+                    document.getElementById('id').value = aluno.id;
+                    document.getElementById('nome').value = aluno.nome;
+                    document.getElementById('cpf').value = aluno.cpf;
+                    document.getElementById('email').value = aluno.email || '';
+                    document.getElementById('telefone').value = aluno.telefone || '';
+                    document.getElementById('tituloForm').textContent = 'Editar aluno';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+
+                item.append(texto, botao);
+                lista.appendChild(item);
+            });
+        } catch (erro) {
+            mensagem.textContent = erro.message;
+        }
+    }
+
+    form.addEventListener('submit', async evento => {
+        evento.preventDefault();
+
+        const id = document.getElementById('id').value;
+
+        const aluno = {
+            nome: document.getElementById('nome').value,
+            cpf: document.getElementById('cpf').value,
+            email: document.getElementById('email').value,
+            telefone: document.getElementById('telefone').value
+        };
+
+        try {
+            const url = id ? `/api/alunos/${id}` : '/api/alunos';
+            const metodo = id ? 'PUT' : 'POST';
+
+            const resultado = await requisicao(url, {
+                method: metodo,
+                body: JSON.stringify(aluno)
+            });
+
+            mensagem.textContent = resultado.mensagem;
+            form.reset();
+            document.getElementById('id').value = '';
+            document.getElementById('tituloForm').textContent = 'Cadastrar aluno';
+
+            await carregarAlunos();
+        } catch (erro) {
+            mensagem.textContent = erro.message;
+        }
+    });
+
+    document.getElementById('btnBuscar').addEventListener('click', () => {
+        carregarAlunos(document.getElementById('busca').value);
+    });
+
+    document.getElementById('btnTodos').addEventListener('click', () => {
+        document.getElementById('busca').value = '';
+        carregarAlunos();
+    });
+
+    document.getElementById('btnCancelar').addEventListener('click', () => {
+        form.reset();
+        document.getElementById('id').value = '';
+        document.getElementById('tituloForm').textContent = 'Cadastrar aluno';
+        mensagem.textContent = '';
+    });
+
+    carregarAlunos();
+</script>
+</body>
+</html>
